@@ -3,11 +3,11 @@ const CACHE_NAME =
 
 const ASSETS = [
     '/',
-    '/index.html',
-    '/css/style.css',
-    '/js/miner.js',
-    '/js/app.js',
-    '/manifest.json'
+    'index.html',
+    'css/style.css',
+    'js/miner.js',
+    'js/app.js',
+    'manifest.json'
 ];
 
 /*
