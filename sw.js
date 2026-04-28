@@ -2,7 +2,6 @@ const CACHE_NAME =
     'mwc-miner-v1';
 
 const ASSETS = [
-    '/',
     'index.html',
     'css/style.css',
     'js/miner.js',
