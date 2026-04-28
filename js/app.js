@@ -13,7 +13,7 @@ if ('serviceWorker' in navigator) {
         try {
 
             const registration =
-                await navigator.serviceWorker.register('/sw.js');
+                await navigator.serviceWorker.register('sw.js');
 
             console.log(
                 'Service Worker Registered',
@@ -331,68 +331,68 @@ function renderBoard(
 |--------------------------------------------------------------------------
 */
 
-async function loadLeaderboard() {
+// async function loadLeaderboard() {
 
-    try {
+//     try {
 
-        const res =
-            await fetch(
-                'http://localhost:3000/leaderboard'
-            );
+//         const res =
+//             await fetch(
+//                 'http://localhost:3000/leaderboard'
+//             );
 
-        const raw =
-            await res.json();
+//         const raw =
+//             await res.json();
 
-        const mwc =
-            dedupeWorkers(
+//         const mwc =
+//             dedupeWorkers(
 
-                raw.filter(
-                    x =>
-                    x.algo ===
-                    'yespowerMWC'
-                )
+//                 raw.filter(
+//                     x =>
+//                     x.algo ===
+//                     'yespowerMWC'
+//                 )
 
-            ).sort(
-                (a, b) =>
-                    (b.peakHashrate || 0)
-                    -
-                    (a.peakHashrate || 0)
-            );
+//             ).sort(
+//                 (a, b) =>
+//                     (b.peakHashrate || 0)
+//                     -
+//                     (a.peakHashrate || 0)
+//             );
 
-        const advc =
-            dedupeWorkers(
+//         const advc =
+//             dedupeWorkers(
 
-                raw.filter(
-                    x =>
-                    x.algo ===
-                    'yespowerADVC'
-                )
+//                 raw.filter(
+//                     x =>
+//                     x.algo ===
+//                     'yespowerADVC'
+//                 )
 
-            ).sort(
-                (a, b) =>
-                    (b.peakHashrate || 0)
-                    -
-                    (a.peakHashrate || 0)
-            );
+//             ).sort(
+//                 (a, b) =>
+//                     (b.peakHashrate || 0)
+//                     -
+//                     (a.peakHashrate || 0)
+//             );
 
-        renderBoard(
-            mwcLeaderboardRows,
-            mwc
-        );
+//         renderBoard(
+//             mwcLeaderboardRows,
+//             mwc
+//         );
 
-        renderBoard(
-            advcLeaderboardRows,
-            advc
-        );
+//         renderBoard(
+//             advcLeaderboardRows,
+//             advc
+//         );
 
-    } catch (err) {
+//     } catch (err) {
 
-        console.error(
-            'Leaderboard Error:',
-            err
-        );
-    }
-}
+//         console.error(
+//             'Leaderboard Error:',
+//             err
+//         );
+//     }
+// }
 
 /*
 |--------------------------------------------------------------------------
