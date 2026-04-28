@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Algo Stratum Miner</title>
+
+    <link rel="manifest" href="/manifest.json">
+
+    <meta name="theme-color" content="#00e5ff">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>⛏️ Multi-Algo Stratum Miner</h2>
+
+    <div class="status">
+        <span class="dot" id="dot"></span>
+        <span id="statusText">Idle</span>
+    </div>
+
+    <form id="stratumForm">
+
+        <label>Pool URL</label>
+        <input id="poolUrl" required>
+
+        <label>Port</label>
+        <input id="port" type="number" required>
+
+        <label>Worker</label>
+        <input id="worker" required>
+
+        <label>Password</label>
+        <input id="password" value="x">
+
+        <label>Algorithm</label>
+        <select id="algo">
+            <option value="yespowerMWC">yespowerMWC (MWC)</option>
+            <option value="yespowerADVC">yespowerADVC (ADVC)</option>
+            
+        </select>
+
+        <label>Threads</label>
+        <select id="threads"></select>
+
+        <label style="display:flex;gap:8px;align-items:center;margin-top:8px">
+            <input type="checkbox" id="ssl" style="width:auto">
+            SSL
+        </label>
+
+        <div class="row">
+            <button type="submit" id="miningBtn">Start Mining</button>
+            <button type="button" id="shareBtn">Share</button>
+        </div>
+
+    </form>
+
+    <div class="stats">
+
+        <div class="stat">
+            <span>Hashrate</span>
+            <div class="value" id="hashrate">0 KH/s</div>
+        </div>
+
+        <div class="stat">
+            <span>Peak Hashrate</span>
+            <div class="value" id="peakHashrate">0 KH/s</div>
+        </div>
+
+        <div class="stat">
+            <span>Job</span>
+            <div class="value" id="job">-</div>
+        </div>
+
+        <div class="stat">
+            <span>Algorithm</span>
+            <div class="value" id="currentAlgo">-</div>
+        </div>
+
+        <div class="stat">
+            <span>Status</span>
+            <div class="value" id="minerState">Idle</div>
+        </div>
+
+        <div class="stat">
+            <span>Uptime</span>
+            <div class="value" id="uptime">0s</div>
+        </div>
+
+        <div class="stat">
+            <span>Jobs Received</span>
+            <div class="value" id="jobsReceived">0</div>
+        </div>
+
+        <div class="stat">
+            <span>Jobs Failed</span>
+            <div class="value" id="jobsFailed">0</div>
+        </div>
+
+        <div class="stat">
+            <span>Threads</span>
+            <div class="value" id="activeThreads">0</div>
+        </div>
+
+    </div>
+
+    <div class="leaderboard">
+
+        <div class="leaderboard-tabs">
+
+            <button
+                class="leaderboard-tab active"
+                data-board="mwc">
+
+                🏆 MWC
+
+            </button>
+
+            <button
+                class="leaderboard-tab"
+                data-board="advc">
+
+                ⚡ ADVC
+
+            </button>
+
+        </div>
+
+        <div class="leaderboard-panel active"
+            id="mwcBoard">
+
+            <div class="leaderboard-header">
+
+                <div>#</div>
+                <div>Wallet</div>
+                <div>Hashrate</div>
+                <div>Peak</div>
+                <div>Jobs</div>
+                <div>Threads</div>
+                <div>Status</div>
+
+            </div>
+
+            <div id="mwcLeaderboardRows"></div>
+
+        </div>
+
+        <div class="leaderboard-panel"
+            id="advcBoard">
+
+            <div class="leaderboard-header">
+
+                <div>#</div>
+                <div>Wallet</div>
+                <div>Hashrate</div>
+                <div>Peak</div>
+                <div>Jobs</div>
+                <div>Threads</div>
+                <div>Status</div>
+
+            </div>
+
+            <div id="advcLeaderboardRows"></div>
+
+        </div>
+
+    </div>
+
+    <div class="output" id="output"></div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="/js/miner.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
