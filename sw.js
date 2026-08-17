@@ -1,5 +1,5 @@
 const CACHE_NAME =
-    'mwc-miner-v1';
+    'mwc-miner-v2';
 
 const ASSETS = [
     'index.html',

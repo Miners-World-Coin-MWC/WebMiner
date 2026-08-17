@@ -8,7 +8,7 @@
 
     <link rel="manifest" href="manifest.json">
 
-    <meta name="theme-color" content="#00e5ff">
+    <meta name="theme-color" content="#0a0a0b">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -21,39 +21,56 @@
 
 <div class="container">
 
-    <h2>⛏️ Multi-Algo Stratum Miner</h2>
+    <header class="masthead">
 
-    <div class="status">
-        <span class="dot" id="dot"></span>
-        <span id="statusText">Idle</span>
-    </div>
+        <h2><span class="mark">//</span> Multi-Algo Stratum Miner</h2>
 
-    <form id="stratumForm">
+        <div class="status">
+            <span class="dot" id="dot"></span>
+            <span id="statusText">Idle</span>
+        </div>
 
-        <label>Pool URL</label>
-        <input id="poolUrl" required>
+    </header>
 
-        <label>Port</label>
-        <input id="port" type="number" required>
+    <form id="stratumForm" class="panel">
 
-        <label>Worker</label>
-        <input id="worker" required>
+        <div class="panel-title">Connection</div>
 
-        <label>Password</label>
-        <input id="password" value="x">
+        <div class="field">
+            <label for="poolUrl">Pool URL</label>
+            <input id="poolUrl" placeholder="stratum+tcp://pool.example.com" required>
+        </div>
 
-        <label>Algorithm</label>
-        <select id="algo">
-            <option value="yespowerMWC">yespowerMWC (MWC)</option>
-            <option value="yespowerADVC">yespowerADVC (ADVC)</option>
-            
-        </select>
+        <div class="field">
+            <label for="port">Port</label>
+            <input id="port" type="number" placeholder="3333" required>
+        </div>
 
-        <label>Threads</label>
-        <select id="threads"></select>
+        <div class="field">
+            <label for="worker">Worker</label>
+            <input id="worker" placeholder="wallet.rig1" required>
+        </div>
 
-        <label style="display:flex;gap:8px;align-items:center;margin-top:8px">
-            <input type="checkbox" id="ssl" style="width:auto">
+        <div class="field">
+            <label for="password">Password</label>
+            <input id="password" value="x">
+        </div>
+
+        <div class="field">
+            <label for="algo">Algorithm</label>
+            <select id="algo">
+                <option value="yespowerMWC">yespowerMWC (MWC)</option>
+                <option value="yespowerADVC">yespowerADVC (ADVC)</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="threads">Threads</label>
+            <select id="threads"></select>
+        </div>
+
+        <label class="toggle" for="ssl">
+            <input type="checkbox" id="ssl">
             SSL
         </label>
 
@@ -64,118 +81,126 @@
 
     </form>
 
-    <div class="stats">
+    <main>
 
-        <div class="stat">
-            <span>Hashrate</span>
-            <div class="value" id="hashrate">0 KH/s</div>
-        </div>
+        <section class="readout panel">
 
-        <div class="stat">
-            <span>Peak Hashrate</span>
-            <div class="value" id="peakHashrate">0 KH/s</div>
-        </div>
+            <div>
+                <div class="readout-label">Hashrate</div>
+                <div class="primary" id="hashrate">0 KH/s</div>
+            </div>
 
-        <div class="stat">
-            <span>Job</span>
-            <div class="value" id="job">-</div>
-        </div>
+            <div class="secondary">
+                <div class="readout-label">Peak</div>
+                <div class="value" id="peakHashrate">0 KH/s</div>
+            </div>
 
-        <div class="stat">
-            <span>Algorithm</span>
-            <div class="value" id="currentAlgo">-</div>
-        </div>
+        </section>
 
-        <div class="stat">
-            <span>Status</span>
-            <div class="value" id="minerState">Idle</div>
-        </div>
+        <div class="stats">
 
-        <div class="stat">
-            <span>Uptime</span>
-            <div class="value" id="uptime">0s</div>
-        </div>
+            <div class="stat">
+                <span>Status</span>
+                <div class="value" id="minerState">Idle</div>
+            </div>
 
-        <div class="stat">
-            <span>Jobs Received</span>
-            <div class="value" id="jobsReceived">0</div>
-        </div>
+            <div class="stat">
+                <span>Algorithm</span>
+                <div class="value" id="currentAlgo">-</div>
+            </div>
 
-        <div class="stat">
-            <span>Jobs Failed</span>
-            <div class="value" id="jobsFailed">0</div>
-        </div>
+            <div class="stat">
+                <span>Uptime</span>
+                <div class="value" id="uptime">0s</div>
+            </div>
 
-        <div class="stat">
-            <span>Threads</span>
-            <div class="value" id="activeThreads">0</div>
-        </div>
+            <div class="stat">
+                <span>Job</span>
+                <div class="value" id="job">-</div>
+            </div>
 
-    </div>
+            <div class="stat">
+                <span>Jobs Received</span>
+                <div class="value" id="jobsReceived">0</div>
+            </div>
 
-    <div class="leaderboard">
+            <div class="stat">
+                <span>Jobs Failed</span>
+                <div class="value" id="jobsFailed">0</div>
+            </div>
 
-        <div class="leaderboard-tabs">
-
-            <button
-                class="leaderboard-tab active"
-                data-board="mwc">
-
-                🏆 MWC
-
-            </button>
-
-            <button
-                class="leaderboard-tab"
-                data-board="advc">
-
-                ⚡ ADVC
-
-            </button>
+            <div class="stat">
+                <span>Threads</span>
+                <div class="value" id="activeThreads">0</div>
+            </div>
 
         </div>
 
-        <div class="leaderboard-panel active"
-            id="mwcBoard">
+        <section class="leaderboard">
 
-            <div class="leaderboard-header">
+            <div class="leaderboard-tabs">
 
-                <div>#</div>
-                <div>Wallet</div>
-                <div>Hashrate</div>
-                <div>Peak</div>
-                <div>Jobs</div>
-                <div>Threads</div>
-                <div>Status</div>
+                <button
+                    class="leaderboard-tab active"
+                    data-board="mwc">
+
+                    MWC
+
+                </button>
+
+                <button
+                    class="leaderboard-tab"
+                    data-board="advc">
+
+                    ADVC
+
+                </button>
 
             </div>
 
-            <div id="mwcLeaderboardRows"></div>
+            <div class="leaderboard-panel active"
+                id="mwcBoard">
 
-        </div>
+                <div class="leaderboard-header">
 
-        <div class="leaderboard-panel"
-            id="advcBoard">
+                    <div>#</div>
+                    <div>Wallet</div>
+                    <div>Hashrate</div>
+                    <div>Peak</div>
+                    <div>Jobs</div>
+                    <div>Threads</div>
+                    <div>Status</div>
 
-            <div class="leaderboard-header">
+                </div>
 
-                <div>#</div>
-                <div>Wallet</div>
-                <div>Hashrate</div>
-                <div>Peak</div>
-                <div>Jobs</div>
-                <div>Threads</div>
-                <div>Status</div>
+                <div class="leaderboard-rows" id="mwcLeaderboardRows"></div>
 
             </div>
 
-            <div id="advcLeaderboardRows"></div>
+            <div class="leaderboard-panel"
+                id="advcBoard">
 
-        </div>
+                <div class="leaderboard-header">
 
-    </div>
+                    <div>#</div>
+                    <div>Wallet</div>
+                    <div>Hashrate</div>
+                    <div>Peak</div>
+                    <div>Jobs</div>
+                    <div>Threads</div>
+                    <div>Status</div>
 
-    <div class="output" id="output"></div>
+                </div>
+
+                <div class="leaderboard-rows" id="advcLeaderboardRows"></div>
+
+            </div>
+
+        </section>
+
+        <div class="output" id="output"></div>
+
+    </main>
 
 </div>
 
