@@ -66,30 +66,13 @@ function showInstallButton() {
 
         btn.id = 'installBtn';
 
+        btn.type = 'button';
+
         btn.textContent =
             'Install App';
 
-        btn.style.marginTop = '10px';
-
-        btn.style.width = '100%';
-
-        btn.style.padding = '12px';
-
-        btn.style.borderRadius = '10px';
-
-        btn.style.border = 'none';
-
-        btn.style.cursor = 'pointer';
-
-        btn.style.fontWeight = 'bold';
-
-        btn.style.background =
-            'linear-gradient(90deg,#00e5ff,#7c4dff)';
-
-        btn.style.color = '#000';
-
         document
-            .querySelector('.container')
+            .getElementById('stratumForm')
             .appendChild(btn);
 
         btn.addEventListener(
