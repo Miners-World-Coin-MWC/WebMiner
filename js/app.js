@@ -2,43 +2,48 @@ let deferredPrompt = null;
 
 /*
 |--------------------------------------------------------------------------
-| Register Service Worker
+| REGISTER SERVICE WORKER
 |--------------------------------------------------------------------------
 */
 
 if ('serviceWorker' in navigator) {
 
-    window.addEventListener('load', async () => {
+    window.addEventListener(
+        'load',
+        async () => {
 
-        try {
+            try {
 
-            const registration =
-                await navigator.serviceWorker.register('sw.js');
+                const registration =
+                    await navigator.serviceWorker.register(
+                        './sw.js'
+                    );
 
-            console.log(
-                'Service Worker Registered',
-                registration
-            );
+                console.log(
+                    'Service Worker Registered',
+                    registration
+                );
 
-        } catch (err) {
+            } catch (err) {
 
-            console.error(
-                'Service Worker Error',
-                err
-            );
+                console.error(
+                    'Service Worker Error:',
+                    err
+                );
+            }
         }
-    });
+    );
 }
 
 /*
 |--------------------------------------------------------------------------
-| Install Prompt
+| INSTALL PROMPT
 |--------------------------------------------------------------------------
 */
 
 window.addEventListener(
     'beforeinstallprompt',
-    (e) => {
+    e => {
 
         e.preventDefault();
 
@@ -50,41 +55,56 @@ window.addEventListener(
 
 /*
 |--------------------------------------------------------------------------
-| Install Button
+| INSTALL BUTTON
 |--------------------------------------------------------------------------
 */
 
 function showInstallButton() {
 
     let btn =
-        document.getElementById('installBtn');
+        document.getElementById(
+            'installBtn'
+        );
 
-    if (!btn) {
+    if (btn) {
+        return;
+    }
 
-        btn =
-            document.createElement('button');
+    btn =
+        document.createElement(
+            'button'
+        );
 
-        btn.id = 'installBtn';
+    btn.id =
+        'installBtn';
 
-        btn.type = 'button';
+    btn.type =
+        'button';
 
-        btn.textContent =
-            'Install App';
+    btn.textContent =
+        'Install App';
 
-        document
-            .getElementById('stratumForm')
-            .appendChild(btn);
+    const form =
+        document.getElementById(
+            'stratumForm'
+        );
 
-        btn.addEventListener(
-            'click',
-            installPWA
+    if (form) {
+
+        form.appendChild(
+            btn
         );
     }
+
+    btn.addEventListener(
+        'click',
+        installPWA
+    );
 }
 
 /*
 |--------------------------------------------------------------------------
-| Install PWA
+| INSTALL PWA
 |--------------------------------------------------------------------------
 */
 
@@ -107,275 +127,70 @@ async function installPWA() {
     deferredPrompt = null;
 }
 
-const mwcLeaderboardRows =
-    document.getElementById(
-        'mwcLeaderboardRows'
-    );
-
-const advcLeaderboardRows =
-    document.getElementById(
-        'advcLeaderboardRows'
-    );
-
 /*
 |--------------------------------------------------------------------------
-| NORMALIZE WALLET
+| LEADERBOARD
+|--------------------------------------------------------------------------
+|
+| There is currently no backend/API.
+|
+| Therefore there is no live public leaderboard yet.
+|
+| This function prevents the old:
+|
+|   loadLeaderboard is not defined
+|
+| error while keeping the leaderboard area clean.
+|
 |--------------------------------------------------------------------------
 */
 
-function normalizeWorker(worker = '') {
+function loadLeaderboard() {
 
-    /*
-    |--------------------------------------------------------------------------
-    | REMOVE WORKERNAME
-    |--------------------------------------------------------------------------
-    |
-    | wallet.workername
-    | becomes:
-    | wallet
-    |
-    */
+    const mwcRows =
+        document.getElementById(
+            'mwcLeaderboardRows'
+        );
 
-    return worker.split('.')[0];
-}
+    const advcRows =
+        document.getElementById(
+            'advcLeaderboardRows'
+        );
 
-/*
-|--------------------------------------------------------------------------
-| DEDUPE
-|--------------------------------------------------------------------------
-*/
+    if (mwcRows) {
 
-function dedupeWorkers(data) {
-
-    const map = new Map();
-
-    for (const miner of data) {
-
-        const wallet =
-            normalizeWorker(
-                miner.worker
-            );
-
-        const existing =
-            map.get(wallet);
-
-        if (!existing) {
-
-            map.set(
-                wallet,
-                {
-                    ...miner,
-
-                    worker:
-                        wallet
-                }
-            );
-
-            continue;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | MERGE BEST STATS
-        |--------------------------------------------------------------------------
-        */
-
-        existing.lastHashrate =
-            Math.max(
-                existing.lastHashrate || 0,
-                miner.lastHashrate || 0
-            );
-
-        existing.peakHashrate =
-            Math.max(
-                existing.peakHashrate || 0,
-                miner.peakHashrate || 0
-            );
-
-        existing.jobsReceived =
-            (existing.jobsReceived || 0)
-            +
-            (miner.jobsReceived || 0);
-
-        existing.threads =
-            Math.max(
-                existing.threads || 0,
-                miner.threads || 0
-            );
-
-        existing.lastSeen =
-            Math.max(
-                existing.lastSeen || 0,
-                miner.lastSeen || 0
-            );
+        mwcRows.innerHTML = `
+            <div class="leaderboard-row">
+                <div>#</div>
+                <div>Leaderboard unavailable</div>
+                <div>-</div>
+                <div>-</div>
+                <div>-</div>
+                <div>-</div>
+                <div class="offline">
+                    OFFLINE
+                </div>
+            </div>
+        `;
     }
 
-    return Array.from(map.values());
-}
+    if (advcRows) {
 
-/*
-|--------------------------------------------------------------------------
-| RENDER
-|--------------------------------------------------------------------------
-*/
-
-function renderBoard(
-    rowsEl,
-    data
-) {
-
-    rowsEl.innerHTML = '';
-
-    data.forEach(
-        (miner, index) => {
-
-        const row =
-            document.createElement(
-                'div'
-            );
-
-        row.className =
-            'leaderboard-row';
-
-        const online =
-            Date.now()
-            -
-            (miner.lastSeen || 0)
-            <
-            60000;
-
-        let rankClass = '';
-
-        if (index === 0) {
-            rankClass = 'gold';
-        }
-
-        else if (
-            index === 1
-        ) {
-            rankClass = 'silver';
-        }
-
-        else if (
-            index === 2
-        ) {
-            rankClass = 'bronze';
-        }
-
-        row.innerHTML = `
-
-            <div class="rank ${rankClass}">
-                #${index + 1}
+        advcRows.innerHTML = `
+            <div class="leaderboard-row">
+                <div>#</div>
+                <div>Leaderboard unavailable</div>
+                <div>-</div>
+                <div>-</div>
+                <div>-</div>
+                <div>-</div>
+                <div class="offline">
+                    OFFLINE
+                </div>
             </div>
-
-            <div class="worker">
-                ${miner.worker}
-            </div>
-
-            <div>
-                ${(miner.lastHashrate || 0).toFixed(3)} KH/s
-            </div>
-
-            <div>
-                ${(miner.peakHashrate || 0).toFixed(3)} KH/s
-            </div>
-
-            <div>
-                ${miner.jobsReceived || 0}
-            </div>
-
-            <div>
-                ${miner.threads || 0}
-            </div>
-
-            <div class="${
-                online
-                    ? 'online'
-                    : 'offline'
-            }">
-
-                ${
-                    online
-                        ? 'ONLINE'
-                        : 'OFFLINE'
-                }
-
-            </div>
-
         `;
-
-        rowsEl.appendChild(row);
-    });
+    }
 }
-
-/*
-|--------------------------------------------------------------------------
-| LOAD
-|--------------------------------------------------------------------------
-*/
-
-// async function loadLeaderboard() {
-
-//     try {
-
-//         const res =
-//             await fetch(
-//                 'http://localhost:3000/leaderboard'
-//             );
-
-//         const raw =
-//             await res.json();
-
-//         const mwc =
-//             dedupeWorkers(
-
-//                 raw.filter(
-//                     x =>
-//                     x.algo ===
-//                     'yespowerMWC'
-//                 )
-
-//             ).sort(
-//                 (a, b) =>
-//                     (b.peakHashrate || 0)
-//                     -
-//                     (a.peakHashrate || 0)
-//             );
-
-//         const advc =
-//             dedupeWorkers(
-
-//                 raw.filter(
-//                     x =>
-//                     x.algo ===
-//                     'yespowerADVC'
-//                 )
-
-//             ).sort(
-//                 (a, b) =>
-//                     (b.peakHashrate || 0)
-//                     -
-//                     (a.peakHashrate || 0)
-//             );
-
-//         renderBoard(
-//             mwcLeaderboardRows,
-//             mwc
-//         );
-
-//         renderBoard(
-//             advcLeaderboardRows,
-//             advc
-//         );
-
-//     } catch (err) {
-
-//         console.error(
-//             'Leaderboard Error:',
-//             err
-//         );
-//     }
-// }
 
 /*
 |--------------------------------------------------------------------------
@@ -387,60 +202,67 @@ document
     .querySelectorAll(
         '.leaderboard-tab'
     )
-    .forEach(button => {
+    .forEach(
+        button => {
 
-    button.addEventListener(
-        'click',
-        () => {
+            button.addEventListener(
+                'click',
+                () => {
 
-        document
-            .querySelectorAll(
-                '.leaderboard-tab'
-            )
-            .forEach(
-                b =>
-                b.classList.remove(
-                    'active'
-                )
+                    document
+                        .querySelectorAll(
+                            '.leaderboard-tab'
+                        )
+                        .forEach(
+                            b => {
+
+                                b.classList.remove(
+                                    'active'
+                                );
+                            }
+                        );
+
+                    document
+                        .querySelectorAll(
+                            '.leaderboard-panel'
+                        )
+                        .forEach(
+                            panel => {
+
+                                panel.classList.remove(
+                                    'active'
+                                );
+                            }
+                        );
+
+                    button.classList.add(
+                        'active'
+                    );
+
+                    const board =
+                        button.dataset.board;
+
+                    const panel =
+                        document.getElementById(
+                            board +
+                            'Board'
+                        );
+
+                    if (panel) {
+
+                        panel.classList.add(
+                            'active'
+                        );
+                    }
+                }
             );
-
-        document
-            .querySelectorAll(
-                '.leaderboard-panel'
-            )
-            .forEach(
-                p =>
-                p.classList.remove(
-                    'active'
-                )
-            );
-
-        button.classList.add(
-            'active'
-        );
-
-        const board =
-            button.dataset.board;
-
-        document
-            .getElementById(
-                board + 'Board'
-            )
-            .classList.add(
-                'active'
-            );
-    });
-});
+        }
+    );
 
 /*
 |--------------------------------------------------------------------------
-| INIT
+| INITIALIZE
 |--------------------------------------------------------------------------
 */
 
 loadLeaderboard();
-
-setInterval(
-    loadLeaderboard,
-    10000
-);

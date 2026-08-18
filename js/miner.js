@@ -1,4 +1,5 @@
-import * as cpuWebMiner from 'https://esm.run/@marco_ciaramella/cpu-web-miner@1.9.5?bundle';
+import * as cpuWebMiner
+    from 'https://esm.run/@marco_ciaramella/cpu-web-miner@1.9.5?bundle';
 
 let isMining = false;
 
@@ -10,81 +11,6 @@ let currentHashrate = 0;
 let jobsReceived = 0;
 let jobsFailed = 0;
 
-let pingInterval = null;
-
-/*
-|--------------------------------------------------------------------------
-| CONFIG
-|--------------------------------------------------------------------------
-*/
-
-const API_URL =
-    'http://localhost:3000';
-
-const API_KEY =
-    'YOUR_SECRET_KEY';
-
-/*
-|--------------------------------------------------------------------------
-| API HELPER
-|--------------------------------------------------------------------------
-*/
-
-async function apiPost(endpoint, data) {
-
-    const controller = new AbortController();
-
-    const timeout =
-        setTimeout(
-            () => controller.abort(),
-            8000
-        );
-
-    try {
-
-        const res = await fetch(
-            API_URL + endpoint,
-            {
-                method: 'POST',
-
-                headers: {
-                    'Content-Type':
-                        'application/json',
-
-                    'x-api-key':
-                        API_KEY
-                },
-
-                body: JSON.stringify(data),
-
-                signal:
-                    controller.signal
-            }
-        );
-
-        clearTimeout(timeout);
-
-        if (!res.ok) {
-            throw new Error(
-                `HTTP ${res.status}`
-            );
-        }
-
-        return await res.json();
-
-    } catch (err) {
-
-        clearTimeout(timeout);
-
-        console.error(
-            'API Error:',
-            err
-        );
-
-        return null;
-    }
-}
-
 /*
 |--------------------------------------------------------------------------
 | DOM
@@ -92,43 +18,69 @@ async function apiPost(endpoint, data) {
 */
 
 const output =
-    document.getElementById('output');
+    document.getElementById(
+        'output'
+    );
 
 const dot =
-    document.getElementById('dot');
+    document.getElementById(
+        'dot'
+    );
 
 const statusText =
-    document.getElementById('statusText');
+    document.getElementById(
+        'statusText'
+    );
 
 const hashrateEl =
-    document.getElementById('hashrate');
+    document.getElementById(
+        'hashrate'
+    );
 
 const peakHashrateEl =
-    document.getElementById('peakHashrate');
+    document.getElementById(
+        'peakHashrate'
+    );
 
 const uptimeEl =
-    document.getElementById('uptime');
+    document.getElementById(
+        'uptime'
+    );
 
 const activeThreadsEl =
-    document.getElementById('activeThreads');
+    document.getElementById(
+        'activeThreads'
+    );
 
 const jobEl =
-    document.getElementById('job');
+    document.getElementById(
+        'job'
+    );
 
 const currentAlgoEl =
-    document.getElementById('currentAlgo');
+    document.getElementById(
+        'currentAlgo'
+    );
 
 const minerStateEl =
-    document.getElementById('minerState');
+    document.getElementById(
+        'minerState'
+    );
 
 const threadsSelect =
-    document.getElementById('threads');
+    document.getElementById(
+        'threads'
+    );
 
 const jobsReceivedEl =
-    document.getElementById('jobsReceived');
+    document.getElementById(
+        'jobsReceived'
+    );
 
 const jobsFailedEl =
-    document.getElementById('jobsFailed');
+    document.getElementById(
+        'jobsFailed'
+    );
 
 /*
 |--------------------------------------------------------------------------
@@ -139,10 +91,16 @@ const jobsFailedEl =
 const maxThreads =
     navigator.hardwareConcurrency || 4;
 
-for (let i = 1; i <= maxThreads; i++) {
+for (
+    let i = 1;
+    i <= maxThreads;
+    i++
+) {
 
     const option =
-        document.createElement('option');
+        document.createElement(
+            'option'
+        );
 
     option.value = i;
 
@@ -152,7 +110,9 @@ for (let i = 1; i <= maxThreads; i++) {
         option.selected = true;
     }
 
-    threadsSelect.appendChild(option);
+    threadsSelect.appendChild(
+        option
+    );
 }
 
 /*
@@ -168,6 +128,7 @@ const ALGORITHMS = {
 
     yespowerMWC:
         cpuWebMiner.yespowerMWC
+
 };
 
 /*
@@ -180,13 +141,20 @@ function setStatus(on) {
 
     isMining = on;
 
-    dot.classList.toggle('on', on);
+    dot.classList.toggle(
+        'on',
+        on
+    );
 
     statusText.textContent =
-        on ? 'Mining' : 'Idle';
+        on
+            ? 'Mining'
+            : 'Idle';
 
     minerStateEl.textContent =
-        on ? 'Connected' : 'Disconnected';
+        on
+            ? 'Connected'
+            : 'Disconnected';
 
     document.getElementById(
         'miningBtn'
@@ -198,14 +166,16 @@ function setStatus(on) {
 
 /*
 |--------------------------------------------------------------------------
-| FORMAT TIME
+| FORMAT UPTIME
 |--------------------------------------------------------------------------
 */
 
 function formatUptime(seconds) {
 
     const days =
-        Math.floor(seconds / 86400);
+        Math.floor(
+            seconds / 86400
+        );
 
     const hrs =
         Math.floor(
@@ -220,92 +190,120 @@ function formatUptime(seconds) {
     const secs =
         seconds % 60;
 
-    return `${days}d ${hrs}h ${mins}m ${secs}s`;
+    return (
+        `${days}d ` +
+        `${hrs}h ` +
+        `${mins}m ` +
+        `${secs}s`
+    );
 }
 
 /*
 |--------------------------------------------------------------------------
-| UPTIME LOOP
+| UPTIME
 |--------------------------------------------------------------------------
 */
 
-setInterval(() => {
+setInterval(
+    () => {
 
-    if (!isMining) return;
+        if (!isMining) {
+            return;
+        }
 
-    const uptime =
-        Math.floor(
-            (
-                Date.now() -
-                sessionStart
-            ) / 1000
-        );
+        const uptime =
+            Math.floor(
+                (
+                    Date.now() -
+                    sessionStart
+                ) / 1000
+            );
 
-    uptimeEl.textContent =
-        formatUptime(uptime);
+        uptimeEl.textContent =
+            formatUptime(
+                uptime
+            );
 
-}, 1000);
+    },
+    1000
+);
 
 /*
 |--------------------------------------------------------------------------
-| FORM
+| MINING FORM
 |--------------------------------------------------------------------------
 */
 
 document
-    .getElementById('stratumForm')
+    .getElementById(
+        'stratumForm'
+    )
     .addEventListener(
         'submit',
-        async (e) => {
+        async e => {
 
-        e.preventDefault();
+            e.preventDefault();
 
-        const worker =
-            document.getElementById(
-                'worker'
-            ).value;
+            const worker =
+                document.getElementById(
+                    'worker'
+                ).value.trim();
 
-        /*
-        |--------------------------------------------------------------------------
-        | STOP
-        |--------------------------------------------------------------------------
-        */
+            /*
+            |--------------------------------------------------------------------------
+            | STOP MINING
+            |--------------------------------------------------------------------------
+            */
 
-        if (isMining) {
+            if (isMining) {
 
-            await apiPost(
-                '/miner/stop',
-                {
-                    worker,
+                try {
 
-                    peakHashrate:
-                        highestHashrate,
+                    cpuWebMiner.stop();
 
-                    jobsReceived,
+                } catch (err) {
 
-                    jobsFailed
+                    console.error(
+                        'Miner stop error:',
+                        err
+                    );
                 }
-            );
 
-            cpuWebMiner.stop();
+                setStatus(false);
 
-            setStatus(false);
+                output.textContent =
+                    'Stopped';
 
-            clearInterval(
-                pingInterval
-            );
+                hashrateEl.textContent =
+                    '0 KH/s';
 
-            pingInterval = null;
+                peakHashrateEl.textContent =
+                    '0 KH/s';
 
-            output.textContent =
-                'Stopped';
+                currentHashrate = 0;
 
-            hashrateEl.textContent =
-                '0 KH/s';
+                jobsReceived = 0;
+                jobsFailed = 0;
 
-            peakHashrateEl.textContent =
-                '0 KH/s';
+                jobsReceivedEl.textContent =
+                    '0';
 
+                jobsFailedEl.textContent =
+                    '0';
+
+                return;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | RESET SESSION
+            |--------------------------------------------------------------------------
+            */
+
+            sessionStart =
+                Date.now();
+
+            highestHashrate = 0;
             currentHashrate = 0;
 
             jobsReceived = 0;
@@ -317,272 +315,258 @@ document
             jobsFailedEl.textContent =
                 '0';
 
-            return;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | RESET SESSION
-        |--------------------------------------------------------------------------
-        */
-
-        sessionStart = Date.now();
-
-        highestHashrate = 0;
-
-        currentHashrate = 0;
-
-        jobsReceived = 0;
-        jobsFailed = 0;
-
-        jobsReceivedEl.textContent =
-            '0';
-
-        jobsFailedEl.textContent =
-            '0';
-
-        /*
-        |--------------------------------------------------------------------------
-        | ALGO
-        |--------------------------------------------------------------------------
-        */
-
-        const algoKey =
-            document.getElementById(
-                'algo'
-            ).value;
-
-        const algo =
-            ALGORITHMS[algoKey];
-
-        if (!algo) {
-
-            output.textContent =
-                'Unsupported algorithm';
-
-            return;
-        }
-
-        currentAlgoEl.textContent =
-            algoKey;
-
-        /*
-        |--------------------------------------------------------------------------
-        | STRATUM
-        |--------------------------------------------------------------------------
-        */
-
-        const stratum = {
-
-            server:
-                document
-                    .getElementById(
-                        'poolUrl'
-                    )
-                    .value
-                    .replace(
-                        /^stratum\+\w+:\/\//,
-                        ''
-                    ),
-
-            port: parseInt(
-                document
-                    .getElementById(
-                        'port'
-                    ).value
-            ),
-
-            worker,
-
-            password:
-                document
-                    .getElementById(
-                        'password'
-                    ).value,
-
-            ssl:
-                document
-                    .getElementById(
-                        'ssl'
-                    ).checked
-        };
-
-        const threads =
-            parseInt(
-                document
-                    .getElementById(
-                        'threads'
-                    ).value
-            );
-
-        activeThreadsEl.textContent =
-            threads;
-
-        output.textContent =
-            'Connecting...\n\n' +
-            'Pool: ' +
-            stratum.server +
-            '\nAlgo: ' +
-            algoKey;
-
-        /*
-        |--------------------------------------------------------------------------
-        | START MINER
-        |--------------------------------------------------------------------------
-        */
-
-        cpuWebMiner.start(
-
-            algo,
-
-            stratum,
-
-            null,
-
-            threads,
+            peakHashrateEl.textContent =
+                '0 KH/s';
 
             /*
             |--------------------------------------------------------------------------
-            | WORK
+            | ALGORITHM
             |--------------------------------------------------------------------------
             */
 
-            work => {
+            const algoKey =
+                document.getElementById(
+                    'algo'
+                ).value;
 
-                const w =
-                    work?.work || work;
+            const algo =
+                ALGORITHMS[
+                    algoKey
+                ];
 
-                jobsReceived++;
-
-                jobsReceivedEl.textContent =
-                    jobsReceived;
-
-                jobEl.textContent =
-                    (
-                        w.jobId || '-'
-                    ) +
-                    ' [' +
-                    algoKey +
-                    ']';
+            if (!algo) {
 
                 output.textContent =
-                    JSON.stringify(
-                        w,
-                        null,
-                        2
-                    );
-            },
+                    'Unsupported algorithm';
 
-            /*
-            |--------------------------------------------------------------------------
-            | HASHRATE
-            |--------------------------------------------------------------------------
-            */
-
-            hash => {
-
-                const h =
-                    Number(
-                        hash?.hashrateKHs ??
-                        hash?.hashrate ??
-                        0
-                    );
-
-                currentHashrate = h;
-
-                const khs =
-                    h.toFixed(3);
-
-                hashrateEl.textContent =
-                    `${khs} KH/s`;
-
-                if (
-                    h >
-                    highestHashrate
-                ) {
-                    highestHashrate = h;
-                }
-
-                peakHashrateEl.textContent =
-                    `${highestHashrate.toFixed(3)} KH/s`;
-            },
-
-            /*
-            |--------------------------------------------------------------------------
-            | ERROR
-            |--------------------------------------------------------------------------
-            */
-
-            err => {
-
-                console.error(err);
-
-                jobsFailed++;
-
-                jobsFailedEl.textContent =
-                    jobsFailed;
-
-                output.textContent =
-                    'Error:\n\n' +
-                    err;
-
-                setStatus(false);
-            }
-        );
-
-        setStatus(true);
-
-        /*
-        |--------------------------------------------------------------------------
-        | BACKEND START
-        |--------------------------------------------------------------------------
-        */
-
-        await apiPost(
-            '/miner/start',
-            {
-                worker,
-
-                pool:
-                    stratum.server +
-                    ':' +
-                    stratum.port,
-
-                algo:
-                    algoKey,
-
-                threads
-            }
-        );
-
-        /*
-        |--------------------------------------------------------------------------
-        | PING LOOP
-        |--------------------------------------------------------------------------
-        */
-
-        if (pingInterval) {
-            clearInterval(
-                pingInterval
-            );
-        }
-
-        pingInterval =
-            setInterval(() => {
-
-            if (!isMining) {
                 return;
             }
 
-            apiPost(
-                '/miner/ping',
-                {
-                    worker,
+            currentAlgoEl.textContent =
+                algoKey;
 
-                    hashrate:
-                        currentHashrate
-                }
-            );
+            /*
+            |--------------------------------------------------------------------------
+            | STRATUM
+            |--------------------------------------------------------------------------
+            */
 
-        }, 30000);
-    });
+            const poolUrl =
+                document.getElementById(
+                    'poolUrl'
+                ).value.trim();
+
+            const port =
+                parseInt(
+                    document.getElementById(
+                        'port'
+                    ).value,
+                    10
+                );
+
+            const password =
+                document.getElementById(
+                    'password'
+                ).value;
+
+            const ssl =
+                document.getElementById(
+                    'ssl'
+                ).checked;
+
+            /*
+            |--------------------------------------------------------------------------
+            | CLEAN POOL URL
+            |--------------------------------------------------------------------------
+            */
+
+            const server =
+                poolUrl.replace(
+                    /^stratum\+\w+:\/\//i,
+                    ''
+                );
+
+            /*
+            |--------------------------------------------------------------------------
+            | THREADS
+            |--------------------------------------------------------------------------
+            */
+
+            const threads =
+                parseInt(
+                    document.getElementById(
+                        'threads'
+                    ).value,
+                    10
+                );
+
+            activeThreadsEl.textContent =
+                threads;
+
+            /*
+            |--------------------------------------------------------------------------
+            | STRATUM CONFIG
+            |--------------------------------------------------------------------------
+            */
+
+            const stratum = {
+
+                server,
+
+                port,
+
+                worker,
+
+                password,
+
+                ssl
+            };
+
+            /*
+            |--------------------------------------------------------------------------
+            | UI
+            |--------------------------------------------------------------------------
+            */
+
+            output.textContent =
+                'Connecting...\n\n' +
+                'Pool: ' +
+                server +
+                ':' +
+                port +
+                '\nAlgo: ' +
+                algoKey +
+                '\nWorker: ' +
+                worker;
+
+            /*
+            |--------------------------------------------------------------------------
+            | START CPU MINER
+            |--------------------------------------------------------------------------
+            */
+
+            try {
+
+                cpuWebMiner.start(
+
+                    algo,
+
+                    stratum,
+
+                    null,
+
+                    threads,
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | WORK CALLBACK
+                    |--------------------------------------------------------------------------
+                    */
+
+                    work => {
+
+                        const w =
+                            work?.work ||
+                            work;
+
+                        jobsReceived++;
+
+                        jobsReceivedEl.textContent =
+                            jobsReceived;
+
+                        jobEl.textContent =
+                            (
+                                w?.jobId ||
+                                '-'
+                            ) +
+                            ' [' +
+                            algoKey +
+                            ']';
+
+                        output.textContent =
+                            JSON.stringify(
+                                w,
+                                null,
+                                2
+                            );
+                    },
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | HASHRATE CALLBACK
+                    |--------------------------------------------------------------------------
+                    */
+
+                    hash => {
+
+                        const h =
+                            Number(
+                                hash?.hashrateKHs ??
+                                hash?.hashrate ??
+                                0
+                            );
+
+                        currentHashrate =
+                            Number.isFinite(h)
+                                ? h
+                                : 0;
+
+                        hashrateEl.textContent =
+                            `${currentHashrate.toFixed(3)} KH/s`;
+
+                        if (
+                            currentHashrate >
+                            highestHashrate
+                        ) {
+
+                            highestHashrate =
+                                currentHashrate;
+                        }
+
+                        peakHashrateEl.textContent =
+                            `${highestHashrate.toFixed(3)} KH/s`;
+                    },
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | ERROR CALLBACK
+                    |--------------------------------------------------------------------------
+                    */
+
+                    err => {
+
+                        console.error(
+                            'Miner Error:',
+                            err
+                        );
+
+                        jobsFailed++;
+
+                        jobsFailedEl.textContent =
+                            jobsFailed;
+
+                        output.textContent =
+                            'Mining Error:\n\n' +
+                            String(err);
+
+                        setStatus(false);
+                    }
+                );
+
+                setStatus(true);
+
+            } catch (err) {
+
+                console.error(
+                    'Failed to start miner:',
+                    err
+                );
+
+                output.textContent =
+                    'Failed to start miner:\n\n' +
+                    String(err);
+
+                setStatus(false);
+            }
+        }
+    );
